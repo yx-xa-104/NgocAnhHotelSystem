@@ -46,6 +46,18 @@
         .auth-switch { cursor: pointer; color: #3b82f6; font-weight: 600; }
         .auth-switch:hover { text-decoration: underline; }
         .img-cover { width: 100%; height: 100%; object-fit: cover; }
+
+        /* PRINT STYLES */
+        @media print {
+            body * { visibility: hidden; }
+            #modal-invoice, #modal-invoice * { visibility: visible; }
+            #modal-invoice {
+                position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+                background: white; display: block !important; padding: 0; margin: 0; z-index: 99999;
+            }
+            .no-print { display: none !important; }
+            #invoice-content { overflow: visible !important; height: auto !important; }
+        }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 h-screen flex flex-col overflow-hidden transition-colors duration-300">
@@ -58,19 +70,17 @@
                 <div class="relative z-10">
                     <div class="flex items-center gap-3 mb-6"><i data-lucide="building-2" class="w-10 h-10 text-white"></i><span class="font-bold text-3xl tracking-wider">NGỌC ANH</span></div>
                     <h1 class="text-4xl font-bold mb-4">Hệ thống Quản lý Khách sạn</h1>
-                    <p class="text-blue-100 opacity-90 text-lg">Đồng bộ dữ liệu thời gian thực (Broadcast API).</p>
+                    <p class="text-blue-100 opacity-90 text-lg">UY TÍN - CHẤT LƯỢNG - ĐỘC ĐÁO</p>
                 </div>
-                <div class="relative z-10 text-xs opacity-70">© 2025 Ngoc Anh Hotel System v4.1</div>
+                <div class="relative z-10 text-xs opacity-70">© 2025 Ngoc Anh Hotel System</div>
             </div>
             <div class="w-full md:w-1/2 p-8 flex flex-col relative">
-                <div class="flex justify-end mb-6"><div class="text-xs text-slate-400 font-mono bg-slate-100 px-2 py-1 rounded">v4.1 UX/UI Fix</div></div>
-                
+                <div class="flex justify-end mb-6"><div class="text-xs text-slate-400 font-mono bg-slate-100 px-2 py-1 rounded">NHÓM 3 - CNPM</div></div>
                 <div class="flex border-b border-slate-200 mb-8">
                     <button onclick="switchLoginTab('staff')" id="tab-login-staff" class="flex-1 pb-3 text-sm font-bold text-blue-600 border-b-2 border-blue-600 transition-all">Nhân viên</button>
                     <button onclick="switchLoginTab('guest')" id="tab-login-guest" class="flex-1 pb-3 text-sm font-bold text-slate-400 hover:text-slate-600 transition-all">Khách hàng</button>
                 </div>
-
-                <!-- Staff Login -->
+                <!-- Staff Form -->
                 <div id="form-staff" class="flex-1 flex flex-col fade-in">
                     <h2 class="text-2xl font-bold text-slate-800 mb-6">Đăng nhập nội bộ</h2>
                     <div class="space-y-4 mb-6">
@@ -80,8 +90,7 @@
                     <button onclick="handleStaffLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-lg">Truy cập</button>
                     <div class="mt-4 text-xs text-slate-400 text-center bg-slate-50 p-2 rounded border border-slate-100"><span class="font-bold">Gợi ý:</span> Lễ tân (letan/123) - Quản lý (admin/admin)</div>
                 </div>
-
-                <!-- Guest Login -->
+                <!-- Guest Form -->
                 <div id="form-guest-login" class="hidden flex-1 flex-col fade-in">
                     <h2 class="text-2xl font-bold text-slate-800 mb-2">Xin chào quý khách</h2>
                     <p class="text-sm text-slate-500 mb-6">Đăng nhập để đặt phòng và gọi dịch vụ.</p>
@@ -92,7 +101,6 @@
                     <button onclick="handleGuestLogin()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow-lg mb-4">Đăng nhập</button>
                     <div class="text-center text-sm text-slate-500">Chưa có tài khoản? <span class="auth-switch" onclick="toggleGuestMode('register')">Đăng ký ngay</span></div>
                 </div>
-
                 <!-- Guest Register -->
                 <div id="form-guest-register" class="hidden flex-1 flex-col fade-in">
                     <h2 class="text-2xl font-bold text-slate-800 mb-4">Đăng ký thành viên</h2>
@@ -106,35 +114,21 @@
                 </div>
             </div>
         </div>
+    </div>
 
-    <!--  MAIN APP LAYOUT  -->
+    <!-- MAIN APP LAYOUT -->
     <div id="main-app" class="flex-col h-full hidden">
-        <!-- Main Header -->
         <div class="bg-slate-900 text-white p-3 flex justify-between items-center shadow-md z-50 shrink-0">
             <div class="flex items-center gap-3"><i data-lucide="building-2" class="text-blue-400"></i><span class="font-bold tracking-wider text-lg hidden sm:inline">NGỌC ANH HOTEL</span><span class="font-bold tracking-wider text-lg sm:hidden">NA HOTEL</span></div>
-
-            <!-- Đổi vai trò nhanh (Dành cho demo) -->
-            <div class="hidden lg:flex bg-slate-800 rounded p-1 gap-1">
-                <button onclick="quickSwitchRole('reception')" class="px-3 py-1 rounded text-xs font-bold hover:bg-blue-600 transition-colors text-slate-300 hover:text-white">Lễ tân</button>
-                <button onclick="quickSwitchRole('manager')" class="px-3 py-1 rounded text-xs font-bold hover:bg-blue-600 transition-colors text-slate-300 hover:text-white">Quản lý</button>
-                <button onclick="quickSwitchRole('guest')" class="px-3 py-1 rounded text-xs font-bold hover:bg-blue-600 transition-colors text-slate-300 hover:text-white">Khách</button>
-            </div>
-
             <div class="flex items-center gap-4">
-                <div class="hidden md:flex items-center gap-2 text-sm text-slate-300">
-                    <span>Xin chào,</span>
-                    <strong class="text-white" id="user-display-name">...</strong>
-                    <span class="bg-blue-600 text-white text-[10px] px-2 py-0.5 rounded uppercase font-bold" id="user-role-badge">ROLE</span>
-                </div>
+                <div class="hidden md:flex items-center gap-2 text-sm text-slate-300"><span>Xin chào,</span><strong class="text-white" id="user-display-name">...</strong><span class="bg-blue-600 text-white text-[10px] px-2 py-0.5 rounded uppercase font-bold" id="user-role-badge">ROLE</span></div>
                 <button onclick="logout()" class="flex items-center gap-2 text-slate-300 hover:text-white transition-colors text-sm font-medium"><i data-lucide="log-out" class="w-4 h-4"></i> <span class="hidden sm:inline">Thoát</span></button>
             </div>
         </div>
 
         <div id="app-container" class="flex-1 overflow-hidden relative bg-slate-200">
-
             <!-- RECEPTION VIEW (PC) -->
             <div id="view-reception" class="hidden w-full h-full bg-slate-100 flex-row">
-                <!-- Sidebar -->
                 <div class="w-64 bg-white border-r border-slate-200 flex flex-col hidden md:flex shrink-0 z-20">
                     <nav class="flex-1 p-4 space-y-1 mt-4">
                         <button onclick="switchReceptionTab('rack')" id="nav-rack" class="w-full flex items-center gap-3 px-4 py-3 bg-blue-50 text-blue-600 rounded-lg font-medium border-l-4 border-blue-600 text-left transition-all"><i data-lucide="layout-dashboard"></i> Sơ đồ phòng</button>
@@ -146,11 +140,7 @@
                     </nav>
                     <div class="p-4 border-t border-slate-200"><button onclick="clearData()" class="flex items-center gap-2 text-slate-400 hover:text-red-500 text-sm w-full px-4 py-2"><i data-lucide="trash-2"></i> Reset Dữ liệu</button></div>
                 </div>
-
-                <!-- Main Content -->
                 <div class="flex-1 flex flex-col min-w-0 bg-slate-100 relative overflow-hidden">
-                    
-                    <!-- TAB: ROOM RACK -->
                     <div id="tab-rack" class="flex flex-col h-full fade-in">
                         <div class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0 shadow-sm z-10">
                             <h2 class="text-xl font-bold text-slate-800">Sơ đồ phòng</h2>
@@ -162,8 +152,6 @@
                         </div>
                         <div class="flex-1 overflow-y-auto p-6 bg-slate-100"><div id="room-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 pb-20"></div></div>
                     </div>
-
-                    <!-- TAB: GUESTS -->
                     <div id="tab-guests" class="hidden flex-col h-full fade-in bg-white">
                         <div class="h-16 bg-white border-b border-slate-200 flex items-center px-6 shadow-sm justify-between">
                             <h2 class="text-xl font-bold text-slate-800">Khách đang lưu trú</h2>
@@ -171,8 +159,6 @@
                         </div>
                         <div class="p-6 overflow-y-auto"><table class="w-full text-sm text-left border rounded-lg overflow-hidden"><thead class="bg-slate-50 text-slate-500 font-bold uppercase text-xs"><tr><th class="px-6 py-4">Phòng</th><th class="px-6 py-4">Khách hàng</th><th class="px-6 py-4">SĐT</th><th class="px-6 py-4">Giờ vào</th><th class="px-6 py-4">Tạm tính</th><th class="px-6 py-4 text-right">Thao tác</th></tr></thead><tbody id="guest-list-body" class="divide-y divide-slate-100"></tbody></table></div>
                     </div>
-
-                    <!-- TAB: BOOKINGS -->
                     <div id="tab-bookings" class="hidden flex-col h-full fade-in bg-slate-50">
                         <div class="h-16 bg-white border-b border-slate-200 flex items-center px-6 shadow-sm justify-between">
                             <h2 class="text-xl font-bold text-slate-800">Quản lý Đặt phòng</h2>
@@ -181,8 +167,6 @@
                         <div class="p-6 overflow-y-auto" id="booking-list"></div>
                     </div>
                 </div>
-
-                <!-- Right Detail Panel -->
                 <div id="right-panel" class="w-80 bg-white border-l border-slate-200 shadow-xl z-10 hidden xl:flex flex-col transition-all shrink-0">
                     <div class="p-6 border-b border-slate-200 bg-slate-50"><h3 class="text-xs font-bold uppercase text-slate-500 tracking-wider">Chi tiết phòng</h3></div>
                     <div id="panel-content" class="flex-1 p-6 flex flex-col items-center justify-center text-slate-400"><i data-lucide="mouse-pointer-2" class="w-12 h-12 mb-3 opacity-20"></i><p class="text-sm">Chọn một phòng để xem</p></div>
@@ -193,6 +177,7 @@
             <div id="view-manager" class="hidden w-full h-full overflow-hidden bg-slate-800/10 backdrop-blur-sm p-0 md:p-4">
                 <div class="w-full h-full max-w-[480px] mx-auto bg-slate-50 shadow-2xl overflow-hidden flex flex-col md:rounded-3xl border border-slate-300 relative">
                     <div class="flex-1 overflow-y-auto relative" id="mgr-content">
+                        <!-- DASHBOARD -->
                         <div id="mgr-tab-dashboard" class="fade-in">
                             <div class="bg-blue-600 text-white p-6 md:rounded-b-3xl shadow-lg relative z-10 shrink-0">
                                 <div class="flex justify-between items-center mb-6"><h2 class="text-xl font-bold">Dashboard</h2><i data-lucide="shield" class="w-6 h-6 opacity-80"></i></div>
@@ -200,11 +185,29 @@
                             </div>
                             <div class="p-5 space-y-6">
                                 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100"><h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2"><i data-lucide="pie-chart" class="w-4 h-4 text-blue-500"></i> Trạng thái phòng</h3><div class="space-y-4"><div><div class="flex justify-between text-xs mb-1 font-bold"><span class="text-rose-600">Có khách</span><span id="stat-occupied-count">0</span></div><div class="w-full bg-slate-100 rounded-full h-2"><div id="bar-occupied" class="bg-rose-500 h-2 rounded-full transition-all" style="width: 0%"></div></div></div><div><div class="flex justify-between text-xs mb-1 font-bold"><span class="text-emerald-600">Trống</span><span id="stat-available-count">0</span></div><div class="w-full bg-slate-100 rounded-full h-2"><div id="bar-available" class="bg-emerald-500 h-2 rounded-full transition-all" style="width: 0%"></div></div></div><div><div class="flex justify-between text-xs mb-1 font-bold"><span class="text-amber-600">Chờ dọn</span><span id="stat-dirty-count">0</span></div><div class="w-full bg-slate-100 rounded-full h-2"><div id="bar-dirty" class="bg-amber-400 h-2 rounded-full transition-all" style="width: 0%"></div></div></div></div></div>
-                                <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden" id="mgr-transactions"><div class="p-6 text-center text-slate-400 text-sm">Chưa có giao dịch</div></div>
                             </div>
                         </div>
+                        
+                        <!-- ROOMS -->
+                        <div id="mgr-tab-rooms" class="hidden fade-in p-5 pb-20">
+                            <h2 class="text-xl font-bold text-slate-800 mb-4">Quản lý Danh mục Phòng</h2>
+                            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
+                                <h3 class="font-bold mb-4 text-sm uppercase text-slate-500 border-b pb-2">Thêm phòng mới</h3>
+                                <div class="flex gap-2"><input type="text" id="new-room-number" placeholder="Số phòng (VD: 301)" class="border p-2 rounded text-sm w-1/3"><select id="new-room-type" class="border p-2 rounded text-sm flex-1"><option value="SINGLE">Đơn</option><option value="DOUBLE">Đôi</option><option value="VIP">VIP</option></select><button onclick="addNewRoom()" class="bg-blue-600 text-white px-3 rounded font-bold hover:bg-blue-700">+</button></div>
+                            </div>
+                            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"><table class="w-full text-sm text-left"><thead class="bg-slate-50 text-slate-500 font-bold text-xs uppercase"><tr><th class="p-3">Số</th><th class="p-3">Loại</th><th class="p-3">TT</th><th class="p-3 text-right">Xóa</th></tr></thead><tbody id="mgr-room-list"></tbody></table></div>
+                        </div>
+
+                        <!-- REPORTS -->
+                        <div id="mgr-tab-reports" class="hidden fade-in p-5 pb-20">
+                            <h2 class="text-xl font-bold text-slate-800 mb-4">Báo cáo Doanh thu</h2>
+                            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-4"><div class="flex justify-between items-center mb-2"><span class="text-slate-500 text-xs uppercase">Tổng doanh thu</span><i data-lucide="trending-up" class="w-4 h-4 text-green-500"></i></div><div class="text-2xl font-bold text-slate-800" id="report-total-rev">0đ</div></div>
+                            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-sm text-left whitespace-nowrap"><thead class="bg-slate-50 text-slate-500 font-bold text-xs uppercase"><tr><th class="p-3">Phòng</th><th class="p-3">SĐT Khách</th><th class="p-3">Thời gian</th><th class="p-3 text-right">Tiền</th></tr></thead><tbody id="mgr-report-list"></tbody></table></div></div>
+                        </div>
+
+                        <!-- CONFIG -->
                         <div id="mgr-tab-config" class="hidden fade-in p-5 pb-20">
-                            <h2 class="text-xl font-bold text-slate-800 mb-4">Cấu hình</h2>
+                            <h2 class="text-xl font-bold text-slate-800 mb-4">Cấu hình Giá & Dịch vụ</h2>
                             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6"><h3 class="font-bold mb-4 text-sm uppercase text-slate-500 border-b pb-2">Giá phòng</h3><div class="space-y-3"><div><label class="text-xs font-bold text-slate-500">Đơn</label><input type="number" id="cfg-price-single" class="w-full border p-2 rounded mt-1"></div><div><label class="text-xs font-bold text-slate-500">Đôi</label><input type="number" id="cfg-price-double" class="w-full border p-2 rounded mt-1"></div><div><label class="text-xs font-bold text-slate-500">VIP</label><input type="number" id="cfg-price-vip" class="w-full border p-2 rounded mt-1"></div></div></div>
                             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4"><h3 class="font-bold mb-4 text-sm uppercase text-slate-500 border-b pb-2">Dịch vụ</h3><div id="cfg-services-list" class="space-y-3 mb-4"></div><button onclick="addNewServiceRow()" class="w-full border border-dashed border-slate-300 text-slate-500 p-2 rounded hover:bg-slate-50 text-xs font-bold">+ Thêm</button></div>
                             <button onclick="saveManagerConfig()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl mt-6 shadow-lg hover:bg-blue-700">Lưu thay đổi</button>
@@ -212,12 +215,14 @@
                     </div>
                     <div class="bg-white border-t border-slate-200 p-2 flex justify-around items-center text-[10px] font-medium text-slate-400 z-20 shrink-0">
                         <div onclick="switchManagerTab('dashboard')" id="mnav-dashboard" class="flex flex-col items-center text-blue-600 gap-1 cursor-pointer transition-colors"><i data-lucide="layout-dashboard" class="w-5 h-5"></i><span>Tổng quan</span></div>
+                        <div onclick="switchManagerTab('rooms')" id="mnav-rooms" class="flex flex-col items-center gap-1 cursor-pointer hover:text-blue-500 transition-colors"><i data-lucide="door-open" class="w-5 h-5"></i><span>Phòng</span></div>
+                        <div onclick="switchManagerTab('reports')" id="mnav-reports" class="flex flex-col items-center gap-1 cursor-pointer hover:text-blue-500 transition-colors"><i data-lucide="file-text" class="w-5 h-5"></i><span>Báo cáo</span></div>
                         <div onclick="switchManagerTab('config')" id="mnav-config" class="flex flex-col items-center gap-1 cursor-pointer hover:text-blue-500 transition-colors"><i data-lucide="settings" class="w-5 h-5"></i><span>Cấu hình</span></div>
                     </div>
                 </div>
             </div>
 
-            <!-- GUEST VIEW (MOBILE) -->
+            <!-- GUEST VIEW (MOBILE FIXED) -->
             <div id="view-guest" class="hidden w-full h-full overflow-hidden bg-slate-800/10 backdrop-blur-sm p-0 md:p-4">
                 <div class="w-full h-full max-w-[480px] mx-auto bg-white shadow-2xl overflow-hidden flex flex-col md:rounded-3xl border border-slate-300 relative">
                     <div class="bg-slate-900 text-white p-4 flex justify-between items-center z-10 shadow-sm shrink-0">
@@ -263,7 +268,20 @@
     <!-- MODALS -->
     <div id="modal-checkin" class="fixed inset-0 bg-black/50 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden modal-content"><div class="bg-blue-600 px-6 py-4 flex justify-between items-center text-white"><h3 class="font-bold text-lg">Check-in P.<span id="modal-room-id"></span></h3><button onclick="closeModal('modal-checkin')" class="hover:bg-blue-700 p-1 rounded"><i data-lucide="x" class="w-5 h-5"></i></button></div><div class="p-6"><input type="hidden" id="pending-booking-id"><div class="grid grid-cols-3 gap-2 mb-6"><label class="cursor-pointer"><input type="radio" name="checkin-type" value="hourly" class="peer hidden" checked><div class="border rounded-lg p-2 text-center text-xs font-bold peer-checked:bg-blue-50 peer-checked:border-blue-600 text-slate-500 peer-checked:text-blue-600">THEO GIỜ</div></label><label class="cursor-pointer"><input type="radio" name="checkin-type" value="overnight" class="peer hidden"><div class="border rounded-lg p-2 text-center text-xs font-bold peer-checked:bg-blue-50 peer-checked:border-blue-600 text-slate-500 peer-checked:text-blue-600">QUA ĐÊM</div></label><label class="cursor-pointer"><input type="radio" name="checkin-type" value="daily" class="peer hidden"><div class="border rounded-lg p-2 text-center text-xs font-bold peer-checked:bg-blue-50 peer-checked:border-blue-600 text-slate-500 peer-checked:text-blue-600">THEO NGÀY</div></label></div><div class="space-y-4"><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Họ tên <span class="text-red-500">*</span></label><input type="text" id="guest-name" class="w-full border p-2.5 rounded-lg" placeholder="Nhập tên..."></div><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Số điện thoại</label><input type="tel" id="guest-phone" class="w-full border p-2.5 rounded-lg" placeholder="Ví dụ: 0912345678"></div><button onclick="confirmCheckIn()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 shadow-lg">NHẬN PHÒNG</button></div></div></div></div>
     <div id="modal-guest-booking" class="fixed inset-0 bg-black/50 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden modal-content"><div class="bg-slate-800 text-white px-6 py-4 flex justify-between items-center"><h3 class="font-bold">Xác nhận đặt phòng</h3><button onclick="closeModal('modal-guest-booking')"><i data-lucide="x" class="w-5 h-5"></i></button></div><div class="p-6"><input type="hidden" id="booking-room-type"><p class="mb-4 text-sm text-slate-600">Bạn đang đặt phòng loại <strong id="booking-type-display">...</strong>. Lễ tân sẽ xếp phòng cho bạn khi đến nơi.</p><button onclick="confirmGuestBooking()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2">Gửi yêu cầu <i data-lucide="send" class="w-4 h-4"></i></button></div></div></div>
-    <div id="modal-checkout" class="fixed inset-0 bg-black/50 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-white w-full max-w-4xl h-[550px] rounded-2xl shadow-2xl overflow-hidden flex modal-content"><div class="w-1/2 bg-slate-50 p-6 border-r flex flex-col"><h3 class="font-bold text-xl mb-4 flex items-center gap-2"><i data-lucide="receipt"></i> Hóa đơn P.<span id="checkout-room-number"></span></h3><div class="flex-1 bg-white border p-4 rounded-lg shadow-sm overflow-y-auto font-mono text-sm space-y-2"><div class="flex justify-between text-slate-500"><span>Giờ vào:</span><span id="bill-checkin-time" class="font-bold text-slate-800">--</span></div><div class="border-b border-dashed my-2"></div><div class="flex justify-between"><span>Tiền phòng:</span><span id="bill-room-price" class="font-bold">0đ</span></div><div id="bill-services" class="space-y-1 text-xs text-slate-600 pt-2"></div></div><div class="mt-4 pt-4 border-t"><div class="flex justify-between text-xl font-bold text-blue-600 mb-4"><span>Tổng cộng:</span><span id="bill-total">0đ</span></div><button onclick="confirmCheckOut()" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold shadow-lg hover:bg-blue-700">THANH TOÁN & TRẢ PHÒNG</button><button onclick="closeModal('modal-checkout')" class="w-full mt-2 text-slate-500 text-sm hover:underline">Hủy bỏ</button></div></div><div class="w-1/2 p-6 bg-white overflow-y-auto"><h3 class="font-bold mb-4">Thêm dịch vụ</h3><div class="grid grid-cols-2 gap-3 mb-4" id="checkout-services-grid"></div><div><label class="text-xs font-bold text-slate-500">Phụ thu / Giảm giá</label><input type="number" id="surcharge-input" onchange="updateTotal()" class="w-full border p-2 rounded-lg mt-1" placeholder="Nhập số tiền..."></div></div></div></div>
+    <div id="modal-checkout" class="fixed inset-0 bg-black/50 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm"><div class="bg-white w-full max-w-4xl h-[550px] rounded-2xl shadow-2xl overflow-hidden flex modal-content"><div class="w-1/2 bg-slate-50 p-6 border-r flex flex-col"><h3 class="font-bold text-xl mb-4 flex items-center gap-2"><i data-lucide="receipt"></i> Hóa đơn P.<span id="checkout-room-number"></span></h3><div class="flex-1 bg-white border p-4 rounded-lg shadow-sm overflow-y-auto font-mono text-sm space-y-2"><div class="flex justify-between text-slate-500"><span>Giờ vào:</span><span id="bill-checkin-time" class="font-bold text-slate-800">--</span></div><div class="border-b border-dashed my-2"></div><div class="flex justify-between"><span>Tiền phòng:</span><span id="bill-room-price" class="font-bold">0đ</span></div><div id="bill-services" class="space-y-1 text-xs text-slate-600 pt-2"></div></div><div class="mt-4 pt-4 border-t"><div class="flex justify-between text-xl font-bold text-blue-600 mb-4"><span>Tổng cộng:</span><span id="bill-total">0đ</span></div><button onclick="confirmCheckOut()" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold shadow-lg hover:bg-blue-700">THANH TOÁN</button><button onclick="closeModal('modal-checkout')" class="w-full mt-2 text-slate-500 text-sm hover:underline">Hủy bỏ</button></div></div><div class="w-1/2 p-6 bg-white overflow-y-auto"><h3 class="font-bold mb-4">Thêm dịch vụ</h3><div class="grid grid-cols-2 gap-3 mb-4" id="checkout-services-grid"></div><div><label class="text-xs font-bold text-slate-500">Phụ thu / Giảm giá</label><input type="number" id="surcharge-input" onchange="updateTotal()" class="w-full border p-2 rounded-lg mt-1" placeholder="Nhập số tiền..."></div></div></div></div>
+    
+    <!-- INVOICE MODAL -->
+    <div id="modal-invoice" class="fixed inset-0 bg-black/80 z-[70] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-sm rounded-lg shadow-2xl overflow-hidden flex flex-col h-[80vh]">
+            <div class="bg-slate-900 p-4 text-white flex justify-between items-center shrink-0"><h3 class="font-bold">Hóa Đơn Thanh Toán</h3><button onclick="closeModal('modal-invoice')"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+            <div class="p-6 overflow-y-auto flex-1 font-mono text-sm" id="invoice-content"></div>
+            <div class="p-4 border-t bg-slate-50 flex gap-2 shrink-0">
+                <button onclick="printInvoice()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 rounded-lg flex items-center justify-center gap-2"><i data-lucide="printer" class="w-4 h-4"></i> In</button>
+                <button onclick="finishCheckout()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2">Hoàn tất <i data-lucide="check" class="w-4 h-4"></i></button>
+            </div>
+        </div>
+    </div>
+    
     <div id="toast" class="toast"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i> <span id="toast-msg">Thông báo</span></div>
 
     <!-- JAVASCRIPT -->
@@ -273,7 +291,7 @@
         let SERVICES = [{ id: 1, name: 'Nước suối', price: 10000, image: 'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&w=200&q=80' }, { id: 2, name: 'Mì bò trứng', price: 30000, image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=200&q=80' }, { id: 3, name: 'Bò húc', price: 20000, image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=200&q=80' }, { id: 4, name: 'Khăn lạnh', price: 5000, image: 'https://images.unsplash.com/photo-1517686469429-8bdb88b9f907?auto=format&fit=crop&w=200&q=80' }];
         let rooms = Array.from({ length: 15 }, (_, i) => { const floor = Math.floor(i / 5) + 1; const num = i % 5 + 1; return { id: `R${floor}0${num}`, number: `${floor}0${num}`, type: num === 5 ? 'VIP' : (num > 2 ? 'DOUBLE' : 'SINGLE'), status: 'available', guestName: '', guestPhone: '', checkInTime: null, services: [] }; });
         let bookings = []; let guestAccounts = [{name: 'Khách Demo', phone: '0912345678', password: '123'}]; let transactions = []; let totalRevenue = 0; let currentUser = null; 
-        let pendingBookingData = null; let selectedRoomId = null; let currentRoomBasePrice = 0; let currentBillServicesTotal = 0;
+        let pendingBookingData = null; let selectedRoomId = null; let currentRoomBasePrice = 0; let currentBillServicesTotal = 0; let currentTransactionData = null;
         
         const channel = new BroadcastChannel('hotel_sync');
 
@@ -288,24 +306,24 @@
 
         function saveData() { 
             const data = { rooms, bookings, transactions, totalRevenue, guestAccounts, PRICES, SERVICES };
-            localStorage.setItem('hotel_data_v41', JSON.stringify(data)); 
+            localStorage.setItem('hotel_data_v52', JSON.stringify(data)); 
             channel.postMessage('update'); triggerRealtimeUpdate(); 
         }
         function triggerRealtimeUpdate() {
             if(!currentUser) return;
             if(currentUser.role === 'reception') { renderRooms(); renderBookings(); renderGuests(); updateBookingBadge(); }
-            if(currentUser.role === 'manager') renderManagerDashboard();
+            if(currentUser.role === 'manager') { renderManagerDashboard(); renderManagerRooms(); renderManagerReports(); }
             if(currentUser.role === 'guest') { updateGuestView(); renderGuestHistory(); }
         }
         function loadData() {
-            const data = JSON.parse(localStorage.getItem('hotel_data_v41'));
+            const data = JSON.parse(localStorage.getItem('hotel_data_v52'));
             if(data) {
                 rooms = data.rooms; bookings = data.bookings; transactions = data.transactions; totalRevenue = data.totalRevenue; guestAccounts = data.guestAccounts;
                 if(data.PRICES) PRICES = data.PRICES; if(data.SERVICES) SERVICES = data.SERVICES;
                 rooms.forEach(r => { if(r.checkInTime) r.checkInTime = new Date(r.checkInTime); });
             }
         }
-        function clearData() { if(confirm("Xóa sạch dữ liệu?")) { localStorage.removeItem('hotel_data_v41'); location.reload(); } }
+        function clearData() { if(confirm("Xóa sạch dữ liệu?")) { localStorage.removeItem('hotel_data_v52'); location.reload(); } }
 
         // --- AUTH ---
         function switchLoginTab(type) { document.getElementById('form-staff').classList.add('hidden'); document.getElementById('form-guest-login').classList.add('hidden'); document.getElementById('form-guest-register').classList.add('hidden'); document.getElementById('tab-login-staff').className = "flex-1 pb-3 text-sm font-bold text-slate-400 hover:text-slate-600 transition-all"; document.getElementById('tab-login-guest').className = "flex-1 pb-3 text-sm font-bold text-slate-400 hover:text-slate-600 transition-all"; if(type === 'staff') document.getElementById('form-staff').classList.remove('hidden'); else document.getElementById('form-guest-login').classList.remove('hidden'); document.getElementById(`tab-login-${type}`).className = "flex-1 pb-3 text-sm font-bold text-blue-600 border-b-2 border-blue-600 transition-all"; }
@@ -316,7 +334,6 @@
         function loginSuccess(user) { currentUser = user; sessionStorage.setItem('hotel_user', JSON.stringify(user)); document.getElementById('login-screen').classList.add('hidden'); showMainApp(); }
         function logout() { sessionStorage.removeItem('hotel_user'); currentUser = null; location.reload(); }
         function showLoginScreen() { document.getElementById('login-screen').classList.remove('hidden'); document.getElementById('main-app').classList.add('hidden'); }
-        function quickSwitchRole(role) { let user = { role: role, name: role === 'reception' ? 'Lễ Tân Demo' : (role === 'manager' ? 'Quản Lý Demo' : 'Khách Demo'), phone: '0912345678' }; loginSuccess(user); }
         function showMainApp() {
             document.getElementById('main-app').classList.remove('hidden'); document.getElementById('main-app').classList.add('flex');
             document.getElementById('user-display-name').innerText = currentUser.name; document.getElementById('user-role-badge').innerText = currentUser.role.toUpperCase();
@@ -333,12 +350,14 @@
             document.getElementById(`tab-${tabName}`).classList.remove('hidden'); document.getElementById(`tab-${tabName}`).classList.add('flex');
             document.getElementById(`nav-${tabName}`).className = "w-full flex items-center gap-3 px-4 py-3 bg-blue-50 text-blue-600 rounded-lg font-medium border-l-4 border-blue-600 transition-all text-left";
             const rp = document.getElementById('right-panel'); if(tabName === 'rack') { rp.classList.remove('hidden'); rp.classList.add('flex'); } else { rp.classList.add('hidden'); rp.classList.remove('flex'); }
-            if(tabName === 'bookings') renderBookings(); if(tabName === 'guests') renderGuests(); lucide.createIcons();
+            if(tabName === 'bookings') renderBookings(); 
+            if(tabName === 'guests') renderGuests(); 
+            lucide.createIcons();
         }
 
         function handleRoomClick(id) {
             const room = rooms.find(r => r.id === id); selectedRoomId = id;
-            if (room.status === 'dirty') return; 
+            if (room.status === 'dirty') return;
             if (pendingBookingData && room.status === 'available') { if (room.type !== pendingBookingData.roomType && !confirm(`Khác loại phòng. Tiếp tục?`)) return; document.getElementById('modal-room-id').innerText = room.number; document.getElementById('guest-name').value = pendingBookingData.guest; document.getElementById('guest-phone').value = pendingBookingData.phone; document.getElementById('pending-booking-id').value = pendingBookingData.id; openModal('modal-checkin'); return; }
             if (room.status === 'available') { document.getElementById('modal-room-id').innerText = room.number; document.getElementById('guest-name').value = ''; document.getElementById('guest-phone').value = ''; document.getElementById('pending-booking-id').value = ''; openModal('modal-checkin'); }
             else if (room.status === 'occupied') { prepareCheckout(room); openModal('modal-checkout'); }
@@ -360,35 +379,40 @@
             });
         }
 
-        function renderGuests() { const tb = document.getElementById('guest-list-body'); if(!tb) return; tb.innerHTML=''; rooms.filter(r=>r.status==='occupied').forEach(r=>{ let tr=document.createElement('tr'); tr.innerHTML=`<td class="px-6 py-4 font-bold text-blue-600">${r.number}</td><td class="px-6 py-4 font-medium">${r.guestName}<br><span class="text-xs text-slate-400">${r.guestPhone||''}</span></td><td class="px-6 py-4 text-xs">${r.guestPhone||''}</td><td class="px-6 py-4 text-xs">${r.checkInTime?.toLocaleTimeString()||''}</td><td class="px-6 py-4 font-bold">${(PRICES[r.type]+r.services.reduce((a,b)=>a+b.price,0)).toLocaleString()}đ</td><td class="px-6 py-4 text-right"><button onclick="handleRoomClick('${r.id}')" class="text-xs bg-slate-100 px-2 py-1 rounded">Xem</button></td>`; tb.appendChild(tr); }); }
+        // --- MANAGER LOGIC (FULL) ---
+        function switchManagerTab(tabName) { 
+            ['dashboard', 'rooms', 'reports', 'config'].forEach(t => { document.getElementById(`mgr-tab-${t}`).classList.add('hidden'); document.getElementById(`mnav-${t}`).classList.remove('text-blue-600'); });
+            document.getElementById(`mgr-tab-${tabName}`).classList.remove('hidden'); document.getElementById(`mnav-${tabName}`).classList.add('text-blue-600'); 
+            if(tabName==='dashboard') renderManagerDashboard(); if(tabName==='rooms') renderManagerRooms(); if(tabName==='reports') renderManagerReports(); if(tabName==='config') renderManagerConfig();
+        }
         
-        function confirmCheckIn() {
-            const name = document.getElementById('guest-name').value;
-            const phone = document.getElementById('guest-phone').value;
-            if(!name) { alert("Vui lòng nhập tên khách hàng!"); return; } // Validation
-
-            const r = rooms.find(r => r.id === selectedRoomId);
-            r.status = 'occupied'; r.guestName = name; r.guestPhone = phone; r.checkInTime = new Date();
-
-            if(document.getElementById('pending-booking-id').value) {
-                const bid = parseInt(document.getElementById('pending-booking-id').value);
-                bookings = bookings.filter(b => b.id !== bid);
-                cancelPendingBooking();
-            }
-
-            saveData();
-            closeModal('modal-checkin');
-            showToast("Check-in thành công!");
-            
-            // UX Enhancement: Auto switch to Guests list briefly then back or stay
-            switchReceptionTab('guests'); // Show the updated guest list immediately
+        function renderManagerRooms() {
+            const tbody = document.getElementById('mgr-room-list'); tbody.innerHTML = '';
+            rooms.forEach((r, idx) => {
+                tbody.innerHTML += `<tr class="border-b"><td class="p-3 font-bold">${r.number}</td><td class="p-3"><span class="text-xs bg-slate-100 px-2 py-1 rounded">${ROOM_TYPES[r.type].label}</span></td><td class="p-3 text-xs ${r.status==='available'?'text-green-500':'text-red-500'}">${r.status}</td><td class="p-3 text-right"><button class="text-red-500" onclick="deleteRoom(${idx})"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td></tr>`;
+            });
+            lucide.createIcons();
+        }
+        function addNewRoom() {
+            const num = document.getElementById('new-room-number').value;
+            const type = document.getElementById('new-room-type').value;
+            if(!num) return alert("Nhập số phòng!");
+            if(rooms.find(r => r.number === num)) return alert("Phòng đã tồn tại!");
+            rooms.push({ id: `R${Date.now()}`, number: num, type: type, status: 'available', guestName: '', guestPhone: '', checkInTime: null, services: [] });
+            saveData(); renderManagerRooms(); showToast("Thêm phòng thành công");
+        }
+        function deleteRoom(idx) {
+            if(confirm("Xóa phòng này?")) { rooms.splice(idx, 1); saveData(); renderManagerRooms(); }
         }
 
-        function checkInFromBooking(bookingId, guestName, type) { const room = rooms.find(r => r.type === type && r.status === 'available'); if (!room) { alert(`Hết phòng ${type}!`); return; } const booking = bookings.find(b => b.id === bookingId); let phone = ""; if (booking && booking.note && booking.note.includes('SĐT:')) phone = booking.note.split('SĐT:')[1].trim(); else if(booking && booking.phone) phone = booking.phone; pendingBookingData = booking; document.getElementById('pending-booking-bar').classList.remove('hidden'); document.getElementById('pending-guest-name').innerText = guestName; document.getElementById('pending-room-type').innerText = ROOM_TYPES[type].label; showToast("Vui lòng chọn phòng trống trên sơ đồ"); switchReceptionTab('rack'); }
-        function cancelPendingBooking() { pendingBookingData = null; document.getElementById('pending-booking-bar').classList.add('hidden'); }
-        function confirmGuestBooking() { const type = document.getElementById('booking-room-type').value; bookings.push({ id: Date.now(), guest: currentUser.name, phone: currentUser.phone, roomType: type, checkIn: new Date().toLocaleDateString('vi-VN'), status: 'pending' }); saveData(); closeModal('modal-guest-booking'); showToast("Đã gửi yêu cầu!"); switchGuestTab('home'); renderBookings(); updateBookingBadge(); }
-        
-        function switchManagerTab(tabName) { document.getElementById('mgr-tab-dashboard').classList.add('hidden'); document.getElementById('mgr-tab-config').classList.add('hidden'); document.getElementById('mnav-dashboard').classList.remove('text-blue-600'); document.getElementById('mnav-config').classList.remove('text-blue-600'); document.getElementById(`mgr-tab-${tabName}`).classList.remove('hidden'); document.getElementById(`mnav-${tabName}`).classList.add('text-blue-600'); if(tabName === 'dashboard') renderManagerDashboard(); if(tabName === 'config') renderManagerConfig(); }
+        function renderManagerReports() {
+            document.getElementById('report-total-rev').innerText = totalRevenue.toLocaleString() + 'đ';
+            const tbody = document.getElementById('mgr-report-list'); tbody.innerHTML = '';
+            transactions.slice().reverse().forEach(t => {
+                tbody.innerHTML += `<tr class="border-b border-slate-50"><td class="p-3 font-bold text-slate-700">${t.room}</td><td class="p-3 text-slate-500">${t.guestPhone || '--'}</td><td class="p-3 text-slate-400">${t.time}</td><td class="p-3 text-right font-bold text-blue-600">${t.amount.toLocaleString()}đ</td></tr>`;
+            });
+        }
+
         function renderManagerConfig() { document.getElementById('cfg-price-single').value = PRICES.SINGLE; document.getElementById('cfg-price-double').value = PRICES.DOUBLE; document.getElementById('cfg-price-vip').value = PRICES.VIP; const list = document.getElementById('cfg-services-list'); list.innerHTML = ''; SERVICES.forEach((s, idx) => { list.innerHTML += `<div class="flex gap-2 items-center"><input type="text" value="${s.name}" class="border p-2 rounded text-xs flex-1" onchange="updateService(${idx}, 'name', this.value)"><input type="number" value="${s.price}" class="border p-2 rounded text-xs w-20" onchange="updateService(${idx}, 'price', this.value)"><button class="text-red-500 p-2" onclick="deleteService(${idx})"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`; }); lucide.createIcons(); }
         function saveManagerConfig() { PRICES.SINGLE = parseInt(document.getElementById('cfg-price-single').value); PRICES.DOUBLE = parseInt(document.getElementById('cfg-price-double').value); PRICES.VIP = parseInt(document.getElementById('cfg-price-vip').value); saveData(); showToast("Đã lưu cấu hình!"); }
         function updateService(idx, f, v) { SERVICES[idx][f] = (f==='price')?parseInt(v):v; }
@@ -422,20 +446,124 @@
         function renderGuestServicesGrid() { const grid = document.getElementById('guest-services-grid'); if(!grid) return; grid.innerHTML = ''; SERVICES.forEach(s => { grid.innerHTML += `<div class="bg-white p-3 rounded-xl border hover:border-blue-500 cursor-pointer flex flex-col items-center gap-2 shadow-sm active:scale-95 transition-transform" onclick="guestOrder('${s.name}', ${s.price})"><img src="${s.image}" class="w-12 h-12 rounded-lg object-cover"><div class="text-center"><div class="font-bold text-xs">${s.name}</div><div class="text-[10px] text-slate-500">${s.price.toLocaleString()}</div></div></div>`; }); }
 
         function cleanRoom(id, e) { if(e) e.stopPropagation(); const r = rooms.find(r => r.id === id); r.status = 'available'; r.guestName = ''; r.guestPhone = ''; r.services = []; saveData(); renderRooms(); if(currentUser.role === 'manager') renderManagerDashboard(); }
-        function prepareCheckout(room) { document.getElementById('checkout-room-number').innerText = room.number; document.getElementById('bill-checkin-time').innerText = room.checkInTime ? room.checkInTime.toLocaleTimeString() : '--'; const list = document.getElementById('bill-services'); list.innerHTML = ''; room.services.forEach(s => { list.innerHTML += `<div class="flex justify-between"><span>${s.name}</span><span>${s.price.toLocaleString()}đ</span></div>`; }); document.getElementById('bill-room-price').innerText = PRICES[room.type].toLocaleString() + 'đ'; let total = PRICES[room.type] + room.services.reduce((a,b)=>a+b.price,0); document.getElementById('bill-total').innerText = total.toLocaleString() + 'đ'; const grid = document.getElementById('checkout-services-grid'); grid.innerHTML = ''; SERVICES.forEach(s => { grid.innerHTML += `<button onclick="addService('${s.name}', ${s.price})" class="border p-3 rounded-lg hover:bg-blue-50 text-left text-sm font-bold transition-all flex items-center gap-2"><img src="${s.image}" class="w-6 h-6 rounded object-cover"> ${s.name}</button>`; }); }
-        function confirmCheckOut() { const r = rooms.find(r => r.id === selectedRoomId); if(!r) return; const amount = parseInt(document.getElementById('bill-total').innerText.replace(/\D/g,'')); transactions.push({room: r.number, amount: amount, time: new Date().toLocaleTimeString(), guestPhone: r.guestPhone}); totalRevenue += amount; r.status = 'dirty'; r.checkInTime = null; r.services = []; r.guestPhone = ''; saveData(); closeModal('modal-checkout'); renderRooms(); renderManagerDashboard(); renderGuestHistory(); renderGuests(); switchReceptionTab('rack'); }
+        
+        function prepareCheckout(room) {
+            document.getElementById('checkout-room-number').innerText = room.number;
+            document.getElementById('bill-checkin-time').innerText = room.checkInTime ? room.checkInTime.toLocaleTimeString() : '--';
+            const list = document.getElementById('bill-services'); list.innerHTML = '';
+            room.services.forEach(s => { list.innerHTML += `<div class="flex justify-between"><span>${s.name}</span><span>${s.price.toLocaleString()}đ</span></div>`; });
+            document.getElementById('bill-room-price').innerText = PRICES[room.type].toLocaleString() + 'đ';
+            let total = PRICES[room.type] + room.services.reduce((a,b)=>a+b.price,0);
+            document.getElementById('bill-total').innerText = total.toLocaleString() + 'đ';
+            const grid = document.getElementById('checkout-services-grid'); grid.innerHTML = ''; 
+            SERVICES.forEach(s => { grid.innerHTML += `<button onclick="addService('${s.name}', ${s.price})" class="border p-3 rounded-lg hover:bg-blue-50 text-left text-sm font-bold transition-all flex items-center gap-2"><img src="${s.image}" class="w-6 h-6 rounded object-cover"> ${s.name}</button>`; });
+        }
+
+        // New Invoice Logic
+        function confirmCheckOut() { 
+            const r = rooms.find(r => r.id === selectedRoomId); if(!r) return;
+            const roomPrice = parseInt(document.getElementById('bill-room-price').innerText.replace(/\D/g,''));
+            const total = parseInt(document.getElementById('bill-total').innerText.replace(/\D/g,''));
+            const surcharge = parseInt(document.getElementById('surcharge-input').value) || 0;
+            
+            // Generate Invoice HTML
+            const invoiceHtml = `
+                <div class="text-center mb-4">
+                    <h2 class="text-xl font-bold uppercase">Khách Sạn Ngọc Anh</h2>
+                    <p class="text-xs">ĐC: 123 Hồ Tây, Hà Nội</p>
+                    <p class="text-xs">Hotline: 0988.888.888</p>
+                </div>
+                <div class="border-b-2 border-dashed border-slate-300 my-4"></div>
+                <div class="space-y-2 mb-4">
+                    <div class="flex justify-between"><span>Phòng:</span><span class="font-bold">${r.number}</span></div>
+                    <div class="flex justify-between"><span>Khách:</span><span>${r.guestName || 'Khách lẻ'}</span></div>
+                    <div class="flex justify-between"><span>Vào:</span><span>${r.checkInTime ? r.checkInTime.toLocaleString() : '--'}</span></div>
+                    <div class="flex justify-between"><span>Ra:</span><span>${new Date().toLocaleString()}</span></div>
+                </div>
+                <div class="border-b border-dashed border-slate-300 my-4"></div>
+                <div class="space-y-2 mb-4">
+                    <div class="flex justify-between font-bold"><span>Tiền phòng:</span><span>${roomPrice.toLocaleString()}đ</span></div>
+                    ${r.services.map(s => `<div class="flex justify-between text-slate-600"><span>${s.name}</span><span>${s.price.toLocaleString()}đ</span></div>`).join('')}
+                    ${surcharge ? `<div class="flex justify-between text-slate-600"><span>Phụ thu:</span><span>${surcharge.toLocaleString()}đ</span></div>` : ''}
+                </div>
+                <div class="border-b-2 border-dashed border-slate-300 my-4"></div>
+                <div class="flex justify-between text-xl font-bold"><span>TỔNG CỘNG:</span><span>${total.toLocaleString()}đ</span></div>
+                <div class="text-center mt-8 italic text-xs">Cảm ơn quý khách và hẹn gặp lại!</div>
+            `;
+            document.getElementById('invoice-content').innerHTML = invoiceHtml;
+            
+            // Store temp data for finalization
+            currentTransactionData = { room: r.number, total: total, guestPhone: r.guestPhone, roomObj: r };
+            
+            closeModal('modal-checkout');
+            openModal('modal-invoice');
+        }
+
+        function finishCheckout() {
+            if(!currentTransactionData) return;
+            transactions.push({
+                room: currentTransactionData.room, 
+                amount: currentTransactionData.total, 
+                time: new Date().toLocaleTimeString(), 
+                guestPhone: currentTransactionData.guestPhone
+            });
+            totalRevenue += currentTransactionData.total;
+            
+            // Reset room
+            const r = currentTransactionData.roomObj;
+            r.status = 'dirty'; r.checkInTime = null; r.services = []; r.guestName = ''; r.guestPhone = '';
+            
+            saveData();
+            closeModal('modal-invoice');
+            renderRooms(); renderManagerDashboard(); renderGuestHistory(); renderGuests(); switchReceptionTab('rack');
+            showToast(`Thanh toán thành công phòng ${currentTransactionData.room}`);
+            currentTransactionData = null;
+        }
+
+        function printInvoice() { window.print(); }
+
         function getGuestRoom() { return (currentUser && currentUser.role === 'guest') ? rooms.find(r => r.status === 'occupied' && r.guestPhone === currentUser.phone) : null; }
         function switchGuestTab(tabName) { ['home', 'search', 'account'].forEach(t => { document.getElementById(`guest-tab-${t}`).classList.add('hidden'); document.getElementById(`g-nav-${t}`).classList.remove('text-blue-600'); }); document.getElementById(`guest-tab-${tabName}`).classList.remove('hidden'); document.getElementById(`g-nav-${tabName}`).classList.add('text-blue-600'); if(tabName === 'home') updateGuestView(); if(tabName === 'account') renderGuestHistory(); lucide.createIcons(); }
         function guestOrder(n,p) { const r = getGuestRoom(); if(!r) { alert("Lỗi: Bạn chưa Check-in!"); return; } r.services.push({name:n, price:p}); saveData(); showToast(`Đã gọi ${n} thành công!`); updateGuestView(); }
+        function confirmGuestBooking() { const type = document.getElementById('booking-room-type').value; bookings.push({ id: Date.now(), guest: currentUser.name, phone: currentUser.phone, roomType: type, checkIn: new Date().toLocaleDateString('vi-VN'), status: 'pending' }); saveData(); closeModal('modal-guest-booking'); showToast("Đã gửi yêu cầu!"); switchGuestTab('home'); renderBookings(); updateBookingBadge(); }
         function openGuestBookingModal(type) { document.getElementById('booking-room-type').value = type; openModal('modal-guest-booking'); }
         function renderBookings() { const list = document.getElementById('booking-list'); if(!list) return; list.innerHTML = ''; bookings.forEach(bk => { list.innerHTML += `<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm mb-3 flex flex-col gap-3"><div><div class="flex justify-between"><span class="font-bold text-slate-800">${bk.guest}</span><span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded font-bold uppercase">${bk.roomType}</span></div><div class="text-xs text-slate-500 mt-1">SĐT: ${bk.phone || 'N/A'} - Ngày: ${bk.checkIn}</div></div><button onclick="checkInFromBooking(${bk.id}, '${bk.guest}', '${bk.roomType}')" class="bg-blue-600 text-white text-xs font-bold py-2 rounded hover:bg-blue-700">NHẬN PHÒNG</button></div>`; }); updateBookingBadge(); }
         function updateBookingBadge() { const badge = document.getElementById('booking-badge'); if(badge) { badge.innerText = bookings.length; badge.classList.toggle('hidden', bookings.length === 0); } }
+        function checkInFromBooking(bookingId, guestName, type) { const room = rooms.find(r => r.type === type && r.status === 'available'); if (!room) { alert(`Hết phòng ${type}!`); return; } const booking = bookings.find(b => b.id === bookingId); let phone = ""; if (booking && booking.note && booking.note.includes('SĐT:')) phone = booking.note.split('SĐT:')[1].trim(); else if(booking && booking.phone) phone = booking.phone; pendingBookingData = booking; document.getElementById('pending-booking-bar').classList.remove('hidden'); document.getElementById('pending-guest-name').innerText = guestName; document.getElementById('pending-room-type').innerText = ROOM_TYPES[type].label; showToast("Vui lòng chọn phòng trống trên sơ đồ"); switchReceptionTab('rack'); }
         function cancelPendingBooking() { pendingBookingData = null; document.getElementById('pending-booking-bar').classList.add('hidden'); }
-        function addService(n,p) { const r = rooms.find(r=>r.id===selectedRoomId); r.services.push({name:n, price:p}); saveData(); const el = document.createElement('div'); el.className = "flex justify-between"; el.innerHTML = `<span>${n}</span><span>${p.toLocaleString()}đ</span>`; document.getElementById('bill-services').appendChild(el); let total = PRICES[r.type] + r.services.reduce((a,b)=>a+b.price,0); document.getElementById('bill-total').innerText = total.toLocaleString() + 'đ'; }
+        function confirmCheckIn() { const name = document.getElementById('guest-name').value; const phone = document.getElementById('guest-phone').value; if(!name) return; const r = rooms.find(r => r.id === selectedRoomId); r.status = 'occupied'; r.guestName = name; r.guestPhone = phone; r.checkInTime = new Date(); if(document.getElementById('pending-booking-id').value) { const bid = parseInt(document.getElementById('pending-booking-id').value); bookings = bookings.filter(b => b.id !== bid); cancelPendingBooking(); } saveData(); closeModal('modal-checkin'); renderRooms(); renderGuests(); renderBookings(); renderManagerDashboard(); }
+        
+        function addService(n,p) { 
+            const r = rooms.find(r=>r.id===selectedRoomId); 
+            r.services.push({name:n, price:p}); 
+            saveData(); 
+            // UI Update
+            const el = document.createElement('div'); el.className = "flex justify-between"; el.innerHTML = `<span>${n}</span><span>${p.toLocaleString()}đ</span>`; 
+            document.getElementById('bill-services').appendChild(el); 
+            let total = PRICES[r.type] + r.services.reduce((a,b)=>a+b.price,0); 
+            document.getElementById('bill-total').innerText = total.toLocaleString() + 'đ'; 
+        }
+
+        function renderManagerDashboard() { document.getElementById('mgr-revenue').innerText = totalRevenue.toLocaleString() + 'đ'; const occ = rooms.length ? Math.round((rooms.filter(r=>r.status==='occupied').length/rooms.length)*100) : 0; document.getElementById('mgr-occupancy').innerText = occ + '%'; document.getElementById('stat-occupied-count').innerText = rooms.filter(r=>r.status==='occupied').length; document.getElementById('bar-occupied').style.width = occ + '%'; const list = document.getElementById('mgr-transactions'); if(transactions.length === 0) list.innerHTML = '<div class="p-6 text-center text-slate-400 text-sm">Chưa có giao dịch</div>'; else { list.innerHTML = ''; transactions.slice().reverse().forEach(t => { list.innerHTML += `<div class="p-3 border-b border-slate-50 flex justify-between items-center hover:bg-slate-50"><div class="flex items-center gap-3"><div class="bg-green-100 text-green-600 p-2 rounded-lg"><i data-lucide="check-circle" class="w-4 h-4"></i></div><div><div class="text-sm font-bold text-slate-700">Thanh toán P.${t.room}</div><div class="text-xs text-slate-400">${t.time}</div></div></div><div class="font-bold text-blue-600">+${t.amount.toLocaleString()}đ</div></div>`; }); lucide.createIcons(); } }
         function renderGuestHistory() { const list = document.getElementById('guest-history-list'); if(!list) return; const myHistory = transactions.filter(t => t.guestPhone === currentUser.phone); if(myHistory.length === 0) { list.innerHTML = '<div class="p-4 text-center text-slate-400 text-xs">Chưa có lịch sử giao dịch</div>'; return; } list.innerHTML = ''; myHistory.slice().reverse().forEach(t => { list.innerHTML += `<div class="p-4 hover:bg-slate-50"><div class="flex justify-between mb-1"><span class="font-bold text-sm">Phòng ${t.room}</span><span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded font-bold">Hoàn thành</span></div><div class="text-xs text-slate-500 flex justify-between"><span>${t.time}</span><span class="font-bold">${t.amount.toLocaleString()}đ</span></div></div>`; }); }
         
+        function renderGuests() { 
+            const tb = document.getElementById('guest-list-body'); if(!tb) return; 
+            tb.innerHTML=''; 
+            const guests = rooms.filter(r=>r.status==='occupied');
+            if(guests.length === 0) {
+                tb.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400 text-sm italic">Chưa có khách đang lưu trú</td></tr>';
+                return;
+            }
+            guests.forEach(r=>{ 
+                let tr=document.createElement('tr'); 
+                tr.className = "hover:bg-slate-50 transition-colors";
+                tr.innerHTML=`<td class="px-6 py-4 font-bold text-blue-600">${r.number}</td><td class="px-6 py-4 font-medium">${r.guestName}<br><span class="text-xs text-slate-400">${r.guestPhone||''}</span></td><td class="px-6 py-4 text-xs">${r.guestPhone||''}</td><td class="px-6 py-4 text-xs font-mono">${r.checkInTime?.toLocaleTimeString()||''}</td><td class="px-6 py-4 font-bold text-slate-700">${(PRICES[r.type]+r.services.reduce((a,b)=>a+b.price,0)).toLocaleString()}đ</td><td class="px-6 py-4 text-right"><button onclick="handleRoomClick('${r.id}')" class="text-xs bg-blue-50 text-blue-600 px-3 py-1.5 rounded font-bold hover:bg-blue-100 transition-colors">Chi tiết</button></td>`; 
+                tb.appendChild(tr); 
+            }); 
+        }
+
         function showToast(msg) { const t = document.getElementById("toast"); t.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i> ${msg}`; t.className = "toast show"; lucide.createIcons(); setTimeout(()=>t.className = t.className.replace("show",""), 3000); }
-        function updateTimers() { /* Timer logic */ }
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); setTimeout(()=>document.getElementById(id).classList.remove('opacity-0'),10); }
         function closeModal(id) { document.getElementById(id).classList.add('opacity-0'); setTimeout(()=>document.getElementById(id).classList.add('hidden'),200); }
         function toggleDarkMode() { document.body.classList.toggle('bg-slate-900'); document.body.classList.toggle('text-white'); }
